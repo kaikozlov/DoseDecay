@@ -5,7 +5,7 @@ library(tidyverse)
 lbweight = []
 
 # Your drug's constants
-drugname = "caffeine"
+drugname = "[]"
 initialdose = [] # in mg
 mineffconc = [] # in mg/kg
 maxrecdose = [] # in mg
@@ -14,10 +14,10 @@ halflife = [] # in hours
 
 # Time Info
 maxtime = [] # in hours
-start_datetime = "05-02 10:00" # in mm-dd xx:xx 24 hour time
+start_datetime = "[]" # in mm-dd xx:xx 24 hour time
 current_year <- year(now())
 
-# Additional Dose List. Syntax: datetime= "mm-dd hh:mm", dose = mg
+# Additional Dose List. Syntax: Month-Day Time, How much? (mg)
 additionaldoses <- tibble(
   datetime = c(
     "[]",
@@ -98,7 +98,7 @@ ggplot(concentration_df, aes(x = hrdtime, y = mgconc)) +
   
   # Pretty Stuff
   geom_hline(
-    aes(yintercept = 0.5 * kgweight, color = "Minimum Effective Dose"),
+    aes(yintercept = mineffconc * kgweight, color = "Minimum Effective Dose"),
     alpha = 0.5,
     linetype = "dashed"
   ) +
@@ -128,15 +128,13 @@ ggplot(concentration_df, aes(x = hrdtime, y = mgconc)) +
     expand = c(.025, .025),
     limits = c(0, maxtime),
     breaks = seq(0, maxtime, 6),
-    sec.axis = sec_axis( ~ . / 24, labels = hourly_labels, breaks = hourly_breaks /
-                           24),
-    name = "Time of Day"
-  ) +  # Adding secondary axis
-  
+    sec.axis = sec_axis( ~ ./24, labels = hourly_labels, breaks = hourly_breaks/24),
+    name = "Hours"
+  ) +
   scale_y_continuous(
     expand = c(.025, .025),
     limits = c(0, maxrecdose),
-    breaks = seq(0, maxrecdose, 50)
+    breaks = seq(0, maxrecdose, 10),
   ) +
   theme_bw() +
   theme(
