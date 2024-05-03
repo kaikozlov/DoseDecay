@@ -2,7 +2,7 @@ library(tidyverse)
 
 # Constants
 # Your constants
-lbweight = []
+lbweight = [] # in lbs
 
 # Your drug's constants
 drugname = "[]"
@@ -11,23 +11,23 @@ mineffconc = [] # in mg/kg
 maxrecdose = [] # in mg
 halflife = [] # in hours
 
-
-# Time Info
+# Time Information
 maxtime = [] # in hours
 start_datetime = "[]" # in mm-dd xx:xx 24 hour time
-current_year <- year(now())
+
 
 # Additional Dose List. Syntax: Month-Day Time, How much? (mg)
 additionaldoses <- tibble(
   datetime = c(
-    "[]",
-  ),
-  dose = c([],)
+    "[]", # in mm-dd xx:xx 24 hour time
+      ),
+  dose = c([],) # in mg
 )
 
 # Formatting!
 kgweight = lbweight * 0.453592
 drugname = str_to_title(drugname)
+current_year <- year(now())
 start_datetime <- paste(current_year, start_datetime, sep = "-")
 
 # Add the current year to the datetime for correct parsing
@@ -78,7 +78,30 @@ hourly_labels <- format(hourly_labels_datetime, "%H:%M")  # e.g., "14:00"
 
 #Establish graph day intercepts
 day_marks_df <- tibble(xintercept = seq(0, maxtime, by = 24)) %>%
-  mutate(color = "Day Marks")
+  mutate(color = "Days")
+
+#Dynamic Y-Axis Scale Determination
+if(maxrecdose<=50){
+  scalestep=5
+  } else if(maxrecdose<=100){
+    scalestep=10
+  } else if(maxrecdose<=200){
+    scalestep=20
+  } else if(maxrecdose<=500){
+    scalestep=50
+  }  else if(maxrecdose<=1000){
+    scalestep=100
+  }  else if(maxrecdose<=2000){
+    scalestep=200
+  }  else if(maxrecdose<=5000){
+    scalestep=500
+  }  else if(maxrecdose<=10000){
+    scalestep=1000
+  }  else if(maxrecdose<=20000){
+    scalestep=2000
+  } else{
+    scalestep=5000
+  }
 
 # Decay function for the drug
 decay_function <- function(t) {
@@ -107,6 +130,8 @@ ggplot(concentration_df, aes(x = hrdtime, y = mgconc)) +
   geom_vline(data = day_marks_df,
              aes(xintercept = xintercept, color = color),
              alpha = 0.5) +
+  geom_vline(aes(xintercept = 5 * halflife, color = "Predicted 5xHL Steady State"),
+             linetype = "dashed", alpha=0.5) +
   
   labs(
     title = paste(drugname, "Remaining (mg) vs Time (Hours)"),
@@ -119,22 +144,23 @@ ggplot(concentration_df, aes(x = hrdtime, y = mgconc)) +
       "Cumulative Remaining Dose" = "black",
       "Minimum Effective Dose" = "limegreen",
       "Maximum Recommended Dose" = "red",
-      "Day Marks" = "darkblue",
+      "Predicted 5xHL Steady State" = "gold",
+      "Days" = "darkblue",
       # This value is used directly in geom_vline
       "Initial Dose Decay" = "purple"
     )
   ) +
   scale_x_continuous(
-    expand = c(.025, .025),
+    expand = c(0.005, 0),
     limits = c(0, maxtime),
     breaks = seq(0, maxtime, 6),
     sec.axis = sec_axis( ~ ./24, labels = hourly_labels, breaks = hourly_breaks/24),
     name = "Hours"
   ) +
   scale_y_continuous(
-    expand = c(.025, .025),
+    expand = c(0.0035, 0),
     limits = c(0, maxrecdose),
-    breaks = seq(0, maxrecdose, 10),
+    breaks = seq(0, maxrecdose, scalestep),
   ) +
   theme_bw() +
   theme(

@@ -48,3 +48,4 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 DoseDecay.Rproj
+.DS_Store
