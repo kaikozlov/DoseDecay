@@ -5,7 +5,7 @@ library(tidyverse)
 lbweight = []
 
 # Your drug's constants
-drugname = "caffeine"
+drugname = "[]"
 initialdose = [] # in mg
 mineffconc = [] # in mg/kg
 maxrecdose = [] # in mg
@@ -14,7 +14,7 @@ halflife = [] # in hours
 
 # Time Info
 maxtime = [] # in hours
-start_datetime = "05-02 10:00" # in mm-dd xx:xx 24 hour time
+start_datetime = "[]" # in mm-dd xx:xx 24 hour time
 current_year <- year(now())
 
 # Additional Dose List. Syntax: datetime= "mm-dd hh:mm", dose = mg
