@@ -155,7 +155,7 @@ ggplot(concentration_df, aes(x = hrdtime, y = mgconc)) +
     limits = c(0, maxtime),
     breaks = seq(0, maxtime, 6),
     sec.axis = sec_axis( ~ ./24, labels = hourly_labels, breaks = hourly_breaks/24),
-    name = "Hours"
+    name = "Hours Since First Dose"
   ) +
   scale_y_continuous(
     expand = c(0.0035, 0),
